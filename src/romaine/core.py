@@ -1,12 +1,20 @@
 import os
 
 
-class Core():
+class Core(object):
     """
         The core of the Romaine, provides BDD test API.
     """
     # All located features
     features = []
+    instance = None
+
+    def __init__(self):
+        """
+            Initialise Romaine core.
+        """
+        self.steps = {}
+        Core.instance = self
 
     def locate_features(self, path):
         """
