@@ -5,6 +5,9 @@ class Core():
     """
         The core of the Romaine, provides BDD test API.
     """
+    # All located features
+    features = []
+
 
     def locate_features(self, path):
         """
@@ -30,5 +33,7 @@ class Core():
                         feature_file
                         )
                     )
+
+        self.features.extend(feature_candidates)
 
         return feature_candidates
