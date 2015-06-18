@@ -8,7 +8,6 @@ class Core():
     # All located features
     features = []
 
-
     def locate_features(self, path):
         """
             Locate any features given a path.

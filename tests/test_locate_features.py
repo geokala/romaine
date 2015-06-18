@@ -1,4 +1,4 @@
-import common
+import common  # noqa
 import exceptions
 import os
 import unittest
