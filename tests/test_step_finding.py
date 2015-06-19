@@ -1,8 +1,10 @@
-from unittest import TestCase
+#! /usr/bin/env python
+import unittest
 import importlib
+import common
 
 
-class TestStepFinding(TestCase):
+class TestStepFinding(unittest.TestCase):
 
     def test_initial_state(self):
         # Given I have Romaine's core
@@ -78,3 +80,6 @@ class TestStepFinding(TestCase):
                              getattr(some_steps, func_name))
             self.assertEqual(core.steps[step_name].prefix,
                              prefix)
+
+if __name__ == '__main__':
+    unittest.main()
