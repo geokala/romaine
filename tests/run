@@ -19,4 +19,37 @@ if [[ ! -d tests ]]; then
 fi
 
 echo "Running tests."
-find tests -name 'test_*' -executable -print -exec {} \; -exec echo "${test_break}" \;
+find tests -name 'test_*' -executable -print -exec sh -c "{} ; echo ${test_break} " \;
+
+# Blank line for formatting
+echo ""
+
+if ! which flake8 >/dev/null; then
+  echo "Flake8 not present, cannot run code quality checker."
+  echo "You should: pip install flake8"
+  exit 1
+fi
+
+rm -f .romaine_code_quality_error
+echo "Checking tests code quality..."
+find tests -name '*.py' -exec bash -c 'flake8 {} || touch .romaine_code_quality_error' \;
+if [[ -f .romaine_code_quality_error ]]; then
+  echo "...errors found."
+  echo "ERROR: Please correct errors listed above before running again."
+  exit 1
+else
+  echo "...code quality tests complete. No errors found."
+fi
+
+# Blank line for formatting
+echo ""
+
+echo "Checking Romaine core code quality..."
+find src/romaine -name '*.py' -exec bash -c 'flake8 {} || touch .romaine_code_quality_error' \;
+if [[ -f .romaine_code_quality_error ]]; then
+  echo "...errors found."
+  echo "ERROR: Please correct errors listed above before running again."
+  exit 1
+else
+  echo "...code quality tests complete. No errors found."
+fi
