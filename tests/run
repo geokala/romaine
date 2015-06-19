@@ -1,2 +1,22 @@
 #! /usr/bin/env bash
-python -m unittest discover --start-directory tests
+
+test_break="______________________________________________________________________"
+
+location_error() {
+  echo -n "You should execute the tests from the root of the (cloned) "
+  echo "romaine git repository."
+  exit 1
+}
+
+if [[ ! -d src/romaine ]]; then
+  echo -n "Cannot find Romaine source files in src/romaine."
+  location_error
+fi
+
+if [[ ! -d tests ]]; then
+  echo "Cannot find tests directory."
+  location_error
+fi
+
+echo "Running tests."
+find tests -name 'test_*' -executable -print -exec {} \; -exec echo "${test_break}" \;
