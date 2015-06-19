@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 import common  # noqa
 import exceptions
 import os
@@ -54,7 +55,7 @@ class TestLocateFeatures(unittest.TestCase):
             Check we can find features by a relative path.
         """
         # Given I have Romaine's core
-        from tests.common import romaine
+        from common import romaine
         core = romaine.Core()
 
         # When I locate features in tests/features
@@ -79,7 +80,7 @@ class TestLocateFeatures(unittest.TestCase):
             Check we can find features by an absolute path.
         """
         # Given I have Romaine's core
-        from tests.common import romaine
+        from common import romaine
         core = romaine.Core()
 
         # When I locate features in /tmp/romaine_tests/features
@@ -104,7 +105,7 @@ class TestLocateFeatures(unittest.TestCase):
             Check feature location populates class features variable.
         """
         # Given I have Romaine's core
-        from tests.common import romaine
+        from common import romaine
         core = romaine.Core()
 
         # When I locate features in /tmp/romaine_tests/features
@@ -131,3 +132,6 @@ class TestLocateFeatures(unittest.TestCase):
                 'tests/features/subdir/feature3',
                 ]
             )
+
+if __name__ == '__main__':
+    unittest.main()
