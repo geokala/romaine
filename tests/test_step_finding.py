@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import unittest
 import importlib
-import common
+import common  # noqa
 
 
 class TestStepFinding(unittest.TestCase):
