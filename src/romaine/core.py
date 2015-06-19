@@ -31,12 +31,11 @@ class Core(object):
         feature_candidates = []
 
         for walked_path in walked_paths:
-            # Each element in the walked paths is:
-            # base_directory, [list of dirs], [list of files]
-            for feature_file in walked_path[2]:
+            base_directory, sub_directories, feature_files = walked_path
+            for feature_file in feature_files:
                 feature_candidates.append(
                     os.path.join(
-                        walked_path[0],
+                        base_directory,
                         feature_file
                         )
                     )
