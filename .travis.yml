@@ -1,0 +1,9 @@
+install:
+  - virtualenv python2 --python=python2.7
+  - virtualenv python3 --python=python3
+  - python2/bin/pip install -r dev_requirements.txt
+  - python3/bin/pip install -r dev_requirements.txt
+
+script:
+  - . python2/bin/activate && tests/run && deactivate
+  - . python3/bin/activate && tests/run && deactivate
