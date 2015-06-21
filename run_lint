@@ -1,0 +1,39 @@
+#! /usr/bin/env bash
+if ! which flake8 >/dev/null; then
+  echo "Flake8 not present, cannot run code quality checker."
+  echo "You should: pip install flake8"
+  exit 1
+fi
+
+exit_status=0
+
+rm -f .romaine_code_quality_error
+echo "Checking tests code quality..."
+find tests -name '*.py' -exec bash -c 'flake8 {} || touch .romaine_code_quality_error' \;
+if [[ -f .romaine_code_quality_error ]]; then
+  echo "ERROR: Please correct errors listed above before running again."
+  exit_status=1
+else
+  echo "...Romaine tests code quality tests complete. No errors found."
+fi
+
+# Blank line for formatting
+echo ""
+
+rm -f .romaine_code_quality_error
+echo "Checking Romaine core code quality..."
+find src/romaine -name '*.py' -exec bash -c 'flake8 {} || touch .romaine_code_quality_error' \;
+if [[ -f .romaine_code_quality_error ]]; then
+  echo "ERROR: Please correct errors listed above before running again."
+  exit_status=1
+else
+  echo "...Romaine Core code quality tests complete. No errors found."
+fi
+
+if [[ ${exit_status} -ne 0 ]]; then
+  # Blank line for formatting
+  echo ""
+  echo "Please fix all style/syntax errors."
+fi
+
+exit ${exit_status}
