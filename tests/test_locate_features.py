@@ -1,6 +1,4 @@
-from tests import common  # noqa
-from tests import exceptions
-import os
+from tests import common
 import unittest
 
 
@@ -8,46 +6,20 @@ class TestLocateFeatures(unittest.TestCase):
     """
         Test feature location functionality of romaine's core.
     """
-    feature_paths = ('tests/features',
-                     '/tmp/romaine_tests/features')
-    features = ('feature1',
-                'feature2',
-                'subdir/feature3')
-
     def setUp(self):
         """
             Prepare the environment for testing.
         """
         # Running as root may result in an attempt later to remove /tmp
-        if os.geteuid() == 0:
-            raise exceptions.RunningAsRootError(
-                'Running as root may be harmful, aborting.'
-                )
+        common.do_not_run_as_root()
 
-        for base_path in self.feature_paths:
-            try:
-                os.makedirs(os.path.join(base_path, 'subdir'))
-            except OSError:
-                # Path exists, good.
-                pass
-
-            for feature in self.features:
-                with open(os.path.join(base_path, feature), 'a'):
-                    # We don't need to write anything, just create the file
-                    pass
+        common.create_feature_test_trees()
 
     def tearDown(self):
         """
             Revert changes made during testing.
         """
-        for base_path in self.feature_paths:
-            # Remove the feature files
-            for feature in self.features:
-                feature = os.path.join(base_path, feature)
-                os.remove(feature)
-
-            # Attempt to remove all the directories we created
-            os.removedirs(os.path.join(base_path, 'subdir'))
+        common.purge_feature_test_trees()
 
     def test_features_found_by_relative_path(self):
         """
