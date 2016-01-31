@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "What type of multiline argument was found, if any",
+    "oneOf": [
+        {
+            "type": "string",
+            "enum": ["table", "multiline_string"]
+        },
+        {
+            "type": ["null"]
+        }
+    ]
+}

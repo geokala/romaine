@@ -1,0 +1,10 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "array",
+    "items": {
+        "anyOf": [
+            { "$ref": "scenario.json" },
+            { "$ref": "scenario_outline.json" }
+        ]
+    }
+}

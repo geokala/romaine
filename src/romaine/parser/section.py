@@ -162,6 +162,9 @@ class SectionParser(object):
                                   and colon.
                                   e.g. Scenario: This is the description.
                     steps - A list of steps as retrieved by get_steps
+                    examples - Only if this is a scenario outline,
+                               this will be populated with a list of examples
+                               sections.
                 remaining - Any lines not consumed by this function
                 raw_input - The input data for this function
         """

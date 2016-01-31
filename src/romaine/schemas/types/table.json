@@ -1,0 +1,11 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "The table, if one was found, in the form of a list of rows, each of which is a list of columns in that row",
+    "type": "array",
+    "items": {
+        "type": "array",
+        "items": {
+            "type": "string"
+        }
+    }
+}

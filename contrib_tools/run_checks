@@ -1,6 +1,7 @@
 #! /usr/bin/env bash
 echo "Preparing- removing all pycs"
 find -name '*.pyc' -delete
+exit_status=0
 
 for python in 2 3; do
   echo "Running checks for python ${python}"
@@ -20,14 +21,13 @@ for python in 2 3; do
   . ${env}/bin/activate
 
   echo "Checking prerequisites for python ${python}..."
-  if ! which flake8 >/dev/null || ! which coverage >/dev/null; then
-    echo "flake8 or coveragenot present for python ${python}, cannot run code quality checker."
-    echo "You should: env${python}/bin/pip install flake8 coverage"
+  if ! which flake8 >/dev/null || ! which coverage >/dev/null || ! pip list | grep jsonschema > /dev/null || ! python -c 'import mock'; then
+    modules="flake8 coverage jsonschema mock"
+    echo "${modules} not present for python ${python}, cannot run code quality checker."
+    echo "You should: env${python}/bin/pip install ${modules}"
     exit 1
   fi
   echo "...prerequisites are present."
-
-  exit_status=0
 
   echo ""
   echo "------------------------------"

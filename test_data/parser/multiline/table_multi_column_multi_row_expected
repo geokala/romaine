@@ -1,0 +1,9 @@
+{
+  "table": [
+    ["my_table_here", "more_cells"],
+    ["yes"],
+    ["look", "for", "cells"]
+  ],
+  "remaining": [],
+  "raw_input": ["replace with input"]
+}

@@ -1,0 +1,11 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "The contents of the multiline argument, if one was found",
+    "oneOf": [
+        { "$ref": "table.json" },
+        { "$ref": "pythonish_string.json" },
+        {
+            "type": ["null"]
+        }
+    ]
+}

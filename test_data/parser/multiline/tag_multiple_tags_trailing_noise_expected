@@ -1,0 +1,10 @@
+{
+  "tags": [
+    "my_tag",
+    "moretag"
+  ],
+  "remaining": [
+    "Another test"
+  ],
+  "raw_input": ["replace with input"]
+}

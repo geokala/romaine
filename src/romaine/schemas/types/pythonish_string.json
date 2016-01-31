@@ -1,0 +1,8 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "The pythonish string, if one was found, in the form of a list of lines contained in the string",
+    "type": "array",
+    "items": {
+        "type": "string"
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Scenario outline result",
+    "description": "A result from a check for and scenario outline section",
+    "type": "object",
+    "properties": {
+        "element": {
+            "description": "The scenario outline section found, if any.",
+            "oneOf": [
+                { "$ref": "types/scenario_outline.json" },
+                {
+                    "type": ["null"]
+                }
+            ]
+        },
+        "remaining": { "$ref": "types/remaining.json" },
+        "raw_input": { "$ref": "types/raw_input.json" }
+    },
+    "required": ["element", "remaining", "raw_input"],
+    "additionalProperties": false
+}

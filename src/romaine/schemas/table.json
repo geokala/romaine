@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Table result",
+    "description": "A result from a check for a table",
+    "type": "object",
+    "properties": {
+        "table": {
+            "oneOf": [
+                { "$ref": "types/table.json" },
+                { "type": ["null"] }
+            ]
+        },
+        "remaining": { "$ref": "types/remaining.json" },
+        "raw_input": { "$ref": "types/raw_input.json" }
+    },
+    "required": ["table", "remaining", "raw_input"],
+    "additionalProperties": false
+}

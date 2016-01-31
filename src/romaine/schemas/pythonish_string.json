@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Pythonish string result",
+    "description": "A result from a check for a pythonish string",
+    "type": "object",
+    "properties": {
+        "pythonish_string": {
+            "oneOf": [
+                { "$ref": "types/pythonish_string.json" },
+                { "type": ["null"] }
+            ]
+        },
+        "remaining": { "$ref": "types/remaining.json" },
+        "raw_input": { "$ref": "types/raw_input.json" }
+    },
+    "required": ["pythonish_string", "remaining", "raw_input"],
+    "additionalProperties": false
+}

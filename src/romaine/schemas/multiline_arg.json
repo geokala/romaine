@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Multiline argument result",
+    "description": "A result from a check for a multiline argument",
+    "type": "object",
+    "properties": {
+        "type": { "$ref": "types/multiline_arg_type.json" },
+        "data": { "$ref": "types/multiline_arg_data.json" },
+        "remaining": { "$ref": "types/remaining.json" },
+        "raw_input": { "$ref": "types/raw_input.json" }
+    },
+    "required": ["type", "data", "remaining", "raw_input"],
+    "additionalProperties": false
+}

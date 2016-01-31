@@ -1,0 +1,13 @@
+{
+  "table": [
+    ["my_table_here", "more_cells"],
+    ["yes"],
+    ["look", "for", "cells"]
+  ],
+  "remaining": [
+    "no more table",
+    "ending",
+    "|not|part|of|this|table|"
+  ],
+  "raw_input": ["replace with input"]
+}

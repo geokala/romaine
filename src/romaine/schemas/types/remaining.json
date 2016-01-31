@@ -1,0 +1,8 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "Any lines that weren't consumed when looking for the result",
+    "type": "array",
+    "items": {
+        "type": "string"
+    }
+}

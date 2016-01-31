@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Feature result",
+    "description": "A result from a check for a feature",
+    "type": "object",
+    "properties": {
+        "feature": {
+            "type": "object",
+            "properties": {
+                "header": { "$ref": "types/header.json" },
+                "tags": { "$ref": "types/tags.json" },
+                "background": { "$ref": "types/background.json" },
+                "leading_space_and_comments": { "$ref": "types/comments_and_space.json" },
+                "trailing_space_and_comments": { "$ref": "types/comments_and_space.json" },
+                "elements": { "$ref": "types/elements.json" }
+            },
+            "required": ["header", "tags", "background", "leading_space_and_comments", "trailing_space_and_comments", "elements"],
+            "additionalProperties": false
+        },
+        "remaining": { "$ref": "types/remaining.json" },
+        "raw_input": { "$ref": "types/raw_input.json" }
+    },
+    "required": ["feature", "remaining", "raw_input"],
+    "additionalProperties": false
+}

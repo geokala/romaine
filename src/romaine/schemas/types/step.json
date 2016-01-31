@@ -1,0 +1,34 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "A step",
+    "type": "object",
+    "properties": {
+        "leading_comments_and_space": { "$ref": "comments_and_space.json" },
+        "type": {
+            "type": "string",
+            "enum": ["Given", "When", "Then", "And", "But"]
+        },
+        "text": {
+            "type": "string"
+        },
+        "multiline_arg": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "type": { "$ref": "multiline_arg_type.json" },
+                        "data": { "$ref": "multiline_arg_data.json" }
+                    },
+                    "required": ["type", "data"],
+                    "additionalProperties": false
+                },
+                {
+                    "type": ["null"]
+                }
+            ]
+        },
+        "trailing_whitespace": { "$ref": "space.json" }
+    },
+    "required": ["leading_comments_and_space", "type", "text", "multiline_arg", "trailing_whitespace"],
+    "additionalProperties": false
+}

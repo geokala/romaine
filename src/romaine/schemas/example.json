@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Example result",
+    "description": "A result from a check for an examples section",
+    "type": "object",
+    "properties": {
+        "example": {
+            "description": "The examples section found, if any.",
+            "oneOf": [
+                { "$ref": "types/example.json" },
+                {
+                    "type": ["null"]
+                }
+            ]
+        },
+        "remaining": { "$ref": "types/remaining.json" },
+        "raw_input": { "$ref": "types/raw_input.json" }
+    },
+    "required": ["example", "remaining", "raw_input"],
+    "additionalProperties": false
+}

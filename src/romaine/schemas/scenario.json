@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Scenario result",
+    "description": "A result from a check for and scenario section",
+    "type": "object",
+    "properties": {
+        "element": {
+            "description": "The scenario section found, if any.",
+            "oneOf": [
+                { "$ref": "types/scenario.json" },
+                {
+                    "type": ["null"]
+                }
+            ]
+        },
+        "remaining": { "$ref": "types/remaining.json" },
+        "raw_input": { "$ref": "types/raw_input.json" }
+    },
+    "required": ["element", "remaining", "raw_input"],
+    "additionalProperties": false
+}

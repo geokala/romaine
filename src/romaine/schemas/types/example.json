@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "leading_comments_and_space": { "$ref": "comments_and_space.json" },
+        "description": {
+            "type": "string"
+        },
+        "columns": {
+            "type": "object",
+            "patternProperties": {
+                "^.*$": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }                        
+        },
+        "table": { "$ref": "table.json" },
+        "trailing_whitespace": { "$ref": "space.json" }
+    },
+    "required": ["leading_comments_and_space", "columns", "table", "trailing_whitespace"],
+    "additionalProperties": false
+}

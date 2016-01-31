@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Step result",
+    "description": "A result from a check for a step",
+    "type": "object",
+    "properties": {
+        "step": {
+            "description": "The step found, if any.",
+            "oneOf": [
+                { "$ref": "types/step.json" },
+                {
+                    "type": ["null"]
+                }
+            ]
+        },
+        "remaining": { "$ref": "types/remaining.json" },
+        "raw_input": { "$ref": "types/raw_input.json" }
+    },
+    "required": ["step", "remaining", "raw_input"],
+    "additionalProperties": false
+}

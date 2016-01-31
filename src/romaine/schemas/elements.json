@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Elements result",
+    "description": "A result from a check for elements (zero or more scenarios or outlines)",
+    "type": "object",
+    "properties": {
+        "elements": { "$ref": "types/elements.json" },
+        "remaining": { "$ref": "types/remaining.json" },
+        "raw_input": { "$ref": "types/raw_input.json" }
+    },
+    "required": ["elements", "remaining", "raw_input"],
+    "additionalProperties": false
+}

@@ -1,0 +1,12 @@
+{
+  "pythonish_string": null,
+  "remaining": [
+    "",
+    "\"\"\"",
+    "this",
+    "is a",
+    "test",
+    "\"\"\""
+  ],
+  "raw_input": ["replace with input"]
+}

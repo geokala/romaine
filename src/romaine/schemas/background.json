@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Background result",
+    "description": "A result from a check for and background section",
+    "type": "object",
+    "properties": {
+        "background": { "$ref": "types/background.json" },
+        "remaining": { "$ref": "types/remaining.json" },
+        "raw_input": { "$ref": "types/raw_input.json" }
+    },
+    "required": ["background", "remaining", "raw_input"],
+    "additionalProperties": false
+}

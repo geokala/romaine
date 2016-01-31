@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Tags result",
+    "description": "A result from a check for tags",
+    "type": "object",
+    "properties": {
+        "tags": { "$ref": "types/tags.json" },
+        "remaining": { "$ref": "types/remaining.json" },
+        "raw_input": { "$ref": "types/raw_input.json" }
+    },
+    "required": ["tags", "remaining", "raw_input"],
+    "additionalProperties": false
+}

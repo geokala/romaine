@@ -1,0 +1,8 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "The lines provided to search for a result from",
+    "type": "array",
+    "items": {
+        "type": "string"
+    }
+}

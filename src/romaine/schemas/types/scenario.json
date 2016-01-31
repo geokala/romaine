@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "type": {
+            "type": "string",
+            "enum": ["scenario"]
+        },
+        "leading_comments_and_space": { "$ref": "comments_and_space.json" },
+        "tags": { "$ref": "tags.json" },
+        "description": {
+            "type": "string"
+        },
+        "steps": {
+            "type": "array",
+            "items": { "$ref": "step.json" }
+        }
+    },
+    "required": ["type", "leading_comments_and_space", "tags", "steps", "description"],
+    "additionalProperties": false
+}

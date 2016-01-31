@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Leading space result",
+    "description": "A result from a check for leading/trailing space",
+    "type": "object",
+    "properties": {
+        "space": { "$ref": "types/space.json" },
+        "remaining": { "$ref": "types/remaining.json" },
+        "raw_input": { "$ref": "types/raw_input.json" }
+    },
+    "required": ["space", "remaining", "raw_input"],
+    "additionalProperties": false
+}

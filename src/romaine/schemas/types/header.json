@@ -1,0 +1,8 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "The header found, if any.",
+    "type": "array",
+    "items": {
+        "type": "string"
+    }
+}

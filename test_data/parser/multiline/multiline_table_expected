@@ -1,0 +1,6 @@
+{
+  "type": "table",
+  "data": [["my_table_here"]],
+  "remaining": ["\"\"\"", "not this", "\"\"\""],
+  "raw_input": ["replace with input"]
+}

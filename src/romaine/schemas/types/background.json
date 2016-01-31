@@ -1,0 +1,26 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "background": {
+        "description": "The background section found, if any.",
+        "oneOf": [
+            {
+                "type": "object",
+                "properties": {
+                    "leading_comments_and_space": { "$ref": "comments_and_space.json" },
+                    "description": {
+                        "type": "string"
+                    },
+                    "steps": {
+                        "type": "array",
+                        "items": { "$ref": "step.json" }
+                    }
+                },
+                "required": ["leading_comments_and_space", "steps", "description"],
+                "additionalProperties": false
+            },
+            {
+                "type": ["null"]
+            }
+        ]
+    }
+}

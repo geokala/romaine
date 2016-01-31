@@ -1,3 +1,4 @@
+from copy import deepcopy
 import unittest
 from tests import common
 
@@ -15,12 +16,6 @@ class TestMultilineParser(unittest.TestCase):
         # We're doing a lot of long tests- don't limit the diff output length
         self.maxDiff = None
 
-    def tearDown(self):
-        """
-            Revert changes made during testing.
-        """
-        pass
-
     def test_getting_pythonish_string_no_input_modification(self):
         """
             Test that getting a pythonish string doesn't change the input var.
@@ -28,32 +23,20 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_pythonish_string on a list containing
-        # """['"""',
-        #  'this',
-        #  'is a',
-        #  'test',
-        #  '"""',
-        # ] """
-        input_var = [
-            '"""',
-            'this',
-            'is a',
-            'test',
-            '"""',
-        ]
-        parser.multiline.get_pythonish_string(input_var)
+        # When I call get_pythonish_string with input from
+        # multiline/pythonish_string_input
+        input_data = common.get_parser_input(
+            'multiline/pythonish_string_input',
+        )
+
+        expected_data = deepcopy(input_data)
+
+        parser.multiline.get_pythonish_string(input_data)
 
         # Then my input variable is not modified
         self.assertEqual(
-            input_var,
-            [
-                '"""',
-                'this',
-                'is a',
-                'test',
-                '"""',
-            ],
+            input_data,
+            expected_data,
         )
 
     def test_getting_pythonish_string(self):
@@ -63,31 +46,21 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_pythonish_string on a list containing
-        # """['"""',
-        #  'this',
-        #  'is a',
-        #  'test',
-        #  '"""',
-        # ] """
-        input_data = [
-            '"""',
-            'this',
-            'is a',
-            'test',
-            '"""',
-        ]
+        # When I call get_pythonish_string with input from
+        # multiline/pythonish_string_input
+        input_data = common.get_parser_input(
+            'multiline/pythonish_string_input',
+        )
+
         result = parser.multiline.get_pythonish_string(input_data)
 
-        # Then the result is a pythonish string of ['', 'this', 'is a',
-        # 'test', ''] with nothing remaining
+        # Then I see the results from multiline/pythonish_string_expected
         self.assertEqual(
             result,
-            {
-                'pythonish_string': ['', 'this', 'is a', 'test', ''],
-                'remaining': [],
-                'raw_input': input_data,
-            }
+            common.get_parser_output(
+                'multiline/pythonish_string_expected',
+                input_data,
+            ),
         )
 
     def test_getting_pythonish_string_with_delimiter_noise(self):
@@ -97,27 +70,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_pythonish_string on a list containing
-        # """['"""this',
-        #  'is a',
-        #  'test"""',
-        # ] """
-        input_data = [
-            '"""this',
-            'is a',
-            'test"""',
-        ]
+        # When I call get_pythonish_string with input from
+        # multiline/pythonish_string_noisy_delimiters_input
+        input_data = common.get_parser_input(
+            'multiline/pythonish_string_noisy_delimiters_input',
+        )
+
         result = parser.multiline.get_pythonish_string(input_data)
 
-        # Then the result is a pythonish string of ['this', 'is a', 'test']
-        # with nothing remaining
+        # Then I see the results from
+        # multiline/pythonish_string_noisy_delimiters_expected
         self.assertEqual(
             result,
-            {
-                'pythonish_string': ['this', 'is a', 'test'],
-                'remaining': [],
-                'raw_input': input_data,
-            }
+            common.get_parser_output(
+                'multiline/pythonish_string_noisy_delimiters_expected',
+                input_data,
+            ),
         )
 
     def test_getting_pythonish_string_with_trailing_data(self):
@@ -127,31 +95,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_pythonish_string on a list containing
-        # """['"""this',
-        #  'is a',
-        #  'test"""',
-        #  'not',
-        #  'today',
-        # ] """
-        input_data = [
-            '"""this',
-            'is a',
-            'test"""',
-            'not',
-            'today',
-        ]
+        # When I call get_pythonish_string with input from
+        # multiline/pythonish_string_trailing_data_input
+        input_data = common.get_parser_input(
+            'multiline/pythonish_string_trailing_data_input',
+        )
+
         result = parser.multiline.get_pythonish_string(input_data)
 
-        # Then the result is a pythonish string of ['this', 'is a', 'test']
-        # with nothing remaining
+        # Then I see the results from
+        # multiline/pythonish_string_trailing_data_expected
         self.assertEqual(
             result,
-            {
-                'pythonish_string': ['this', 'is a', 'test'],
-                'remaining': ['not', 'today'],
-                'raw_input': input_data,
-            }
+            common.get_parser_output(
+                'multiline/pythonish_string_trailing_data_expected',
+                input_data,
+            ),
         )
 
     def test_fail_getting_single_quoted_pythonish_string(self):
@@ -161,36 +120,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_pythonish_string on a list containing
-        # """["'''",
-        #  'this',
-        #  'is a',
-        #  'test',
-        #  "'''",
-        # ] """
-        input_data = [
-            "'''",
-            'this',
-            'is a',
-            'test'
-            "'''",
-        ]
+        # When I call get_pythonish_string with input from
+        # multiline/pythonish_string_wrong_delimiter_input
+        input_data = common.get_parser_input(
+            'multiline/pythonish_string_wrong_delimiter_input',
+        )
+
         result = parser.multiline.get_pythonish_string(input_data)
 
-        # Then there is no pythonish string and the same input list remaining
+        # Then I see the results from
+        # multiline/pythonish_string_wrong_delimiter_expected
         self.assertEqual(
             result,
-            {
-                'pythonish_string': None,
-                'remaining': [
-                    "'''",
-                    'this',
-                    'is a',
-                    'test'
-                    "'''",
-                ],
-                'raw_input': input_data,
-            }
+            common.get_parser_output(
+                'multiline/pythonish_string_wrong_delimiter_expected',
+                input_data,
+            ),
         )
 
     def test_fail_getting_not_following_pythonish_string(self):
@@ -200,39 +145,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_pythonish_string on a list containing
-        # """['',
-        #  '"""',
-        #  'this',
-        #  'is a',
-        #  'test',
-        #  '"""',
-        # ] """
-        input_data = [
-            '',
-            '"""',
-            'this',
-            'is a',
-            'test'
-            '"""',
-        ]
+        # When I call get_pythonish_string with input from
+        # multiline/pythonish_string_leading_noise_input
+        input_data = common.get_parser_input(
+            'multiline/pythonish_string_leading_noise_input',
+        )
+
         result = parser.multiline.get_pythonish_string(input_data)
 
-        # Then there is no pythonish string and the same input list remaining
+        # Then I see the results from
+        # multiline/pythonish_string_leading_noise_expected
         self.assertEqual(
             result,
-            {
-                'pythonish_string': None,
-                'remaining': [
-                    '',
-                    '"""',
-                    'this',
-                    'is a',
-                    'test'
-                    '"""',
-                ],
-                'raw_input': input_data,
-            }
+            common.get_parser_output(
+                'multiline/pythonish_string_leading_noise_expected',
+                input_data,
+            ),
         )
 
     def test_fail_getting_unclosed_pythonish_string(self):
@@ -242,20 +170,14 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_pythonish_string on a list containing
-        # """['"""',
-        #  'this',
-        #  'is a',
-        #  'test',
-        # ] """
+        # When I call get_pythonish_string with input from
+        # multiline/pythonish_string_unclosed_input
+        input_data = common.get_parser_input(
+            'multiline/pythonish_string_unclosed_input',
+        )
         # Then an UnclosedPythonishString exception is raised
         with self.assertRaises(UnclosedPythonishString):
-            parser.multiline.get_pythonish_string([
-                '"""',
-                'this',
-                'is a',
-                'test'
-            ])
+            parser.multiline.get_pythonish_string(input_data)
 
     def test_fail_getting_last_line_opening_pythonish_string(self):
         """
@@ -264,10 +186,14 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_pythonish_string on a list containing ['"""']
+        # When I call get_pythonish_string with input from
+        # multiline/pythonish_string_unclosed_input
+        input_data = common.get_parser_input(
+            'multiline/pythonish_string_just_opening_input',
+        )
         # Then an UnclosedPythonishString exception is raised
         with self.assertRaises(UnclosedPythonishString):
-            parser.multiline.get_pythonish_string(['"""'])
+            parser.multiline.get_pythonish_string(input_data)
 
     def test_getting_table_no_input_modification(self):
         """
@@ -276,27 +202,20 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_table on a list containing
-        # """[
-        #     '|my_table_here|more_cells|',
-        #     '|yes|',
-        #     '|look|for|cells|',
-        # ] """
-        input_var = [
-            '|my_table_here|more_cells|',
-            '|yes|',
-            '|look|for|cells|',
-        ]
-        parser.multiline.get_table(input_var)
+        # When I call get_table with input from
+        # multiline/table_input
+        input_data = common.get_parser_input(
+            'multiline/table_input',
+        )
+
+        expected_data = deepcopy(input_data)
+
+        parser.multiline.get_table(input_data)
 
         # Then my input variable is not modified
         self.assertEqual(
-            input_var,
-            [
-                '|my_table_here|more_cells|',
-                '|yes|',
-                '|look|for|cells|',
-            ],
+            input_data,
+            expected_data,
         )
 
     def test_get_one_row_one_cell_table(self):
@@ -306,46 +225,47 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_table on a list containing ['|my_table_here|']
-        input_data = [
-            '|my_table_here|',
-        ]
+        # When I call get_table with input from
+        # multiline/table_input
+        input_data = common.get_parser_input(
+            'multiline/table_input',
+        )
+
         result = parser.multiline.get_table(input_data)
 
-        # Then there is a table consisting of [['my_table_here']] and nothing
-        # remaining
+        # Then I see the results from
+        # multiline/table_expected
         self.assertEqual(
             result,
-            {
-                'table': [['my_table_here']],
-                'remaining': [],
-                'raw_input': input_data,
-            }
+            common.get_parser_output(
+                'multiline/table_expected',
+                input_data,
+            ),
         )
 
     def test_get_one_row_multi_cell_table(self):
         """
-            Test that we can get a table consisting of one rwo with two cells.
+            Test that we can get a table consisting of one row with two cells.
         """
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_table on a list containing
-        # ['|my_table_here|more_cells|']
-        input_data = [
-            '|my_table_here|more_cells|'
-        ]
+        # When I call get_table with input from
+        # multiline/table_multi_column_input
+        input_data = common.get_parser_input(
+            'multiline/table_multi_column_input',
+        )
+
         result = parser.multiline.get_table(input_data)
 
-        # Then there is a table consisting of
-        # [['my_table_here', 'more_cells']] and nothing remaining
+        # Then I see the results from
+        # multiline/table_multi_column_expected
         self.assertEqual(
             result,
-            {
-                'table': [['my_table_here', 'more_cells']],
-                'remaining': [],
-                'raw_input': input_data,
-            }
+            common.get_parser_output(
+                'multiline/table_multi_column_expected',
+                input_data,
+            ),
         )
 
     def test_get_multi_row_multi_cell_table(self):
@@ -355,26 +275,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_table on a list containing
-        # ['|my_table_here|more_cells|', '|yes|', '|look|for|cells|']
-        input_data = [
-            '|my_table_here|more_cells|',
-            '|yes|',
-            '|look|for|cells|'
-        ]
+        # When I call get_table with input from
+        # multiline/table_multi_column_multi_row_input
+        input_data = common.get_parser_input(
+            'multiline/table_multi_column_multi_row_input',
+        )
+
         result = parser.multiline.get_table(input_data)
 
-        # Then there is a table consisting of [['my_table_here','more_cells'],
-        # ['yes'], ['look', 'for', 'cells']] and nothing remaining
+        # Then I see the results from
+        # multiline/table_multi_column_multi_row_expected
         self.assertEqual(
             result,
-            {
-                'table': [['my_table_here', 'more_cells'],
-                          ['yes'],
-                          ['look', 'for', 'cells']],
-                'remaining': [],
-                'raw_input': input_data,
-            }
+            common.get_parser_output(
+                'multiline/table_multi_column_multi_row_expected',
+                input_data,
+            ),
         )
 
     def test_get_table_with_trailing_data(self):
@@ -384,33 +300,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_table on a list containing
-        # ['|my_table_here|more_cells|', '|yes|', '|look|for|cells|',
-        #  'no more table', 'ending', '|not|part|of|this|table']
-        input_data = [
-            '|my_table_here|more_cells|',
-            '|yes|',
-            '|look|for|cells|',
-            'no more table',
-            'ending',
-            '|not|part|of|this|table|'
-        ]
+        # When I call get_table with input from
+        # multiline/table_trailing_data_input
+        input_data = common.get_parser_input(
+            'multiline/table_trailing_data_input',
+        )
+
         result = parser.multiline.get_table(input_data)
 
-        # Then there is a table consisting of [['my_table_here','more_cells'],
-        # ['yes'], ['look', 'for', 'cells']] and ['no more table', 'ending',
-        # '|not|part|of|this|table|'] remaining
+        # Then I see the results from
+        # multiline/table_trailing_data_expected
         self.assertEqual(
             result,
-            {
-                'table': [['my_table_here', 'more_cells'],
-                          ['yes'],
-                          ['look', 'for', 'cells']],
-                'remaining': ['no more table',
-                              'ending',
-                              '|not|part|of|this|table|'],
-                'raw_input': input_data,
-            }
+            common.get_parser_output(
+                'multiline/table_trailing_data_expected',
+                input_data,
+            ),
         )
 
     def test_fail_to_get_table(self):
@@ -420,22 +325,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_table on a list containing
-        # ['', '|my_table_here|']
-        input_data = [
-            '',
-            '|my_table_here|',
-        ]
+        # When I call get_table with input from
+        # multiline/table_leading_noise_input
+        input_data = common.get_parser_input(
+            'multiline/table_leading_noise_input',
+        )
+
         result = parser.multiline.get_table(input_data)
 
-        # Then there is no table and ['', '|my_table_here|'] remaining
+        # Then I see the results from
+        # multiline/table_leading_noise_expected
         self.assertEqual(
             result,
-            {
-                'table': None,
-                'remaining': ['', '|my_table_here|'],
-                'raw_input': input_data,
-            }
+            common.get_parser_output(
+                'multiline/table_leading_noise_expected',
+                input_data,
+            ),
         )
 
     def test_getting_multiline_arg_no_input_modification(self):
@@ -445,27 +350,20 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_multiline_arg on a list containing
-        # """[
-        #     '|my_table_here|more_cells|',
-        #     '|yes|',
-        #     '|look|for|cells|',
-        # ] """
-        input_var = [
-            '|my_table_here|more_cells|',
-            '|yes|',
-            '|look|for|cells|',
-        ]
-        parser.multiline.get_multiline_arg(input_var)
+        # When I call get_multiline_arg with input from
+        # multiline/multiline_table_input
+        input_data = common.get_parser_input(
+            'multiline/multiline_table_input',
+        )
+
+        expected_data = deepcopy(input_data)
+
+        parser.multiline.get_multiline_arg(input_data)
 
         # Then my input variable is not modified
         self.assertEqual(
-            input_var,
-            [
-                '|my_table_here|more_cells|',
-                '|yes|',
-                '|look|for|cells|',
-            ],
+            input_data,
+            expected_data,
         )
 
     def test_get_multiline_arg_table(self):
@@ -475,26 +373,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_multiline_arg on a list containing
-        # ['|my_table_here|', '"""', 'not this', '"""']
-        input_data = [
-            '|my_table_here|',
-            '"""',
-            'not this',
-            '"""',
-        ]
+        # When I call get_multiline_arg with input from
+        # multiline/multiline_table_input
+        input_data = common.get_parser_input(
+            'multiline/multiline_table_input',
+        )
+
         result = parser.multiline.get_multiline_arg(input_data)
 
-        # Then the arg is a table containing ['my_table_here'] and ['"""',
-        # 'not this', '"""'] is remaining
+        # Then I see the results from
+        # multiline/multiline_table_expected
         self.assertEqual(
             result,
-            {
-                'type': 'table',
-                'data': [['my_table_here']],
-                'remaining': ['"""', 'not this', '"""'],
-                'raw_input': input_data,
-            }
+            common.get_parser_output(
+                'multiline/multiline_table_expected',
+                input_data,
+            ),
         )
 
     def test_get_multiline_arg_pythonish_string(self):
@@ -504,26 +398,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_multiline_arg on a list containing
-        # ['"""', 'my pystring', '"""', '|not this|']
-        input_data = [
-            '"""',
-            'my pystring',
-            '"""',
-            '|not this|',
-        ]
+        # When I call get_multiline_arg with input from
+        # multiline/multiline_string_input
+        input_data = common.get_parser_input(
+            'multiline/multiline_string_input',
+        )
+
         result = parser.multiline.get_multiline_arg(input_data)
 
-        # Then the arg is a multiline string containing ['', 'my pystring',
-        # ''] and ['|not this|'] is remaining
+        # Then I see the results from
+        # multiline/multiline_string_expected
         self.assertEqual(
             result,
-            {
-                'type': 'multiline_string',
-                'data': ['', 'my pystring', ''],
-                'remaining': ['|not this|'],
-                'raw_input': input_data,
-            }
+            common.get_parser_output(
+                'multiline/multiline_string_expected',
+                input_data,
+            ),
         )
 
     def test_get_no_multiline_arg(self):
@@ -533,31 +423,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_multiline_arg on a list containing
-        # ['', '"""', 'my pystring', '"""', '|not this|']
-        input_data = [
-            '',
-            '"""',
-            'my pystring',
-            '"""',
-            '|not this|',
-        ]
+        # When I call get_multiline_arg with input from
+        # multiline/multiline_leading_noise_input
+        input_data = common.get_parser_input(
+            'multiline/multiline_leading_noise_input',
+        )
+
         result = parser.multiline.get_multiline_arg(input_data)
 
-        # Then there is no multiline arg, and ['', '"""', 'my pystring',
-        # '"""', '|not this|'] is remaining
+        # Then I see the results from
+        # multiline/multiline_leading_noise_expected
         self.assertEqual(
             result,
-            {
-                'type': None,
-                'data': None,
-                'remaining': ['',
-                              '"""',
-                              'my pystring',
-                              '"""',
-                              '|not this|'],
-                'raw_input': input_data,
-            }
+            common.get_parser_output(
+                'multiline/multiline_leading_noise_expected',
+                input_data,
+            ),
         )
 
     def test_getting_leading_comment_no_input_modification(self):
@@ -567,24 +448,20 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_comments_with_space on a list containing
-        # """[
-        #    '# Happy comment',
-        #    '',
-        # ] """
-        input_var = [
-            '# Happy comment',
-            '',
-        ]
-        parser.multiline.get_comments_with_space(input_var)
+        # When I call get_comments_with_space with input from
+        # multiline/comments_space_basic_input
+        input_data = common.get_parser_input(
+            'multiline/comment_space_basic_input',
+        )
+
+        expected_data = deepcopy(input_data)
+
+        parser.multiline.get_comments_with_space(input_data)
 
         # Then my input variable is not modified
         self.assertEqual(
-            input_var,
-            [
-                '# Happy comment',
-                '',
-            ],
+            input_data,
+            expected_data,
         )
 
     def test_get_leading_comment_with_blank_line(self):
@@ -594,29 +471,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_comments_with_space on a list containing
-        # [
-        #     '# Happy comment',
-        #     '',
-        # ]
-        input_data = [
-            '# Happy comment',
-            '',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/comment_space_basic_input
+        input_data = common.get_parser_input(
+            'multiline/comment_space_basic_input',
+        )
+
         result = parser.multiline.get_comments_with_space(input_data)
 
-        # Then I see the following leading lines: ['# Happy comment', ''] and
-        # no remaining lines
+        # Then I see the results from
+        # multiline/comment_space_basic_expected
         self.assertEqual(
             result,
-            {
-                'comments_and_space': [
-                    '# Happy comment',
-                    '',
-                ],
-                'remaining': [],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/comment_space_basic_expected',
+                input_data,
+            ),
         )
 
     def test_get_leading_comment_without_space(self):
@@ -626,26 +496,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_comments_with_space on a list containing
-        # [
-        #     '# Happy comment',
-        # ]
-        input_data = [
-            '# Happy comment',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/comment_space_just_comment_input
+        input_data = common.get_parser_input(
+            'multiline/comment_space_just_comment_input',
+        )
+
         result = parser.multiline.get_comments_with_space(input_data)
 
-        # Then I see the following leading lines: ['# Happy comment'] and
-        # no remaining lines
+        # Then I see the results from
+        # multiline/comment_space_just_comment_expected
         self.assertEqual(
             result,
-            {
-                'comments_and_space': [
-                    '# Happy comment',
-                ],
-                'remaining': [],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/comment_space_just_comment_expected',
+                input_data,
+            ),
         )
 
     def test_get_leading_comment_with_trailing_data(self):
@@ -655,30 +521,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_comments_with_space on a list containing
-        # [
-        #     '# Happy comment',
-        #     'I like tests',
-        # ]
-        input_data = [
-            '# Happy comment',
-            'I like tests',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/comment_space_trailing_data_input
+        input_data = common.get_parser_input(
+            'multiline/comment_space_trailing_data_input',
+        )
+
         result = parser.multiline.get_comments_with_space(input_data)
 
-        # Then I see the following leading lines: ['# Happy comment'] and
-        # remaining: ['I like tests']
+        # Then I see the results from
+        # multiline/comment_space_trailing_data_expected
         self.assertEqual(
             result,
-            {
-                'comments_and_space': [
-                    '# Happy comment',
-                ],
-                'remaining': [
-                    'I like tests'
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/comment_space_trailing_data_expected',
+                input_data,
+            ),
         )
 
     def test_get_leading_comment_with_whitespace(self):
@@ -688,29 +546,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_comments_with_space on a list containing
-        # [
-        #     '# Happy comment',
-        #     '   \t  ',
-        # ]
-        input_data = [
-            '# Happy comment',
-            '   \t  ',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/comment_space_trailing_whitespace_input
+        input_data = common.get_parser_input(
+            'multiline/comment_space_trailing_whitespace_input',
+        )
+
         result = parser.multiline.get_comments_with_space(input_data)
 
-        # Then I see the following leading lines: ['# Happy comment',
-        # '   \t  '] and no remaining lines
+        # Then I see the results from
+        # multiline/comment_space_trailing_whitespace_expected
         self.assertEqual(
             result,
-            {
-                'comments_and_space': [
-                    '# Happy comment',
-                    '   \t  ',
-                ],
-                'remaining': [],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/comment_space_trailing_whitespace_expected',
+                input_data,
+            ),
         )
 
     def test_get_leading_comment_with_whitespace_and_trailing_data(self):
@@ -720,33 +571,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_comments_with_space on a list containing
-        # [
-        #     '# Happy comment',
-        #     '   \t  ',
-        #     'More tests',
-        # ]
-        input_data = [
-            '# Happy comment',
-            '   \t  ',
-            'More tests',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/comment_space_whitespace_trailing_data_input
+        input_data = common.get_parser_input(
+            'multiline/comment_space_whitespace_trailing_data_input',
+        )
+
         result = parser.multiline.get_comments_with_space(input_data)
 
-        # Then I see the following leading lines: ['# Happy comment',
-        # '   \t  '] and remaining: ['More tests']
+        # Then I see the results from
+        # multiline/comment_space_whitespace_trailing_data_expected
         self.assertEqual(
             result,
-            {
-                'comments_and_space': [
-                    '# Happy comment',
-                    '   \t  ',
-                ],
-                'remaining': [
-                    'More tests',
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/comment_space_whitespace_trailing_data_expected',
+                input_data,
+            ),
         )
 
     def test_get_leading_comments(self):
@@ -756,29 +596,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_comments_with_space on a list containing
-        # [
-        #     '# Happy comment',
-        #     '# Sad comment',
-        # ]
-        input_data = [
-            '# Happy comment',
-            '# Sad comment',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/comment_space_multiple_comments_input
+        input_data = common.get_parser_input(
+            'multiline/comment_space_multiple_comments_input',
+        )
+
         result = parser.multiline.get_comments_with_space(input_data)
 
-        # Then I see the following leading lines: ['# Happy comment',
-        # '# Sad comment'] and no remaining lines
+        # Then I see the results from
+        # multiline/comment_space_multiple_comments_expected
         self.assertEqual(
             result,
-            {
-                'comments_and_space': [
-                    '# Happy comment',
-                    '# Sad comment',
-                ],
-                'remaining': [],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/comment_space_multiple_comments_expected',
+                input_data,
+            ),
         )
 
     def test_get_comments_with_space_and_trailing_data(self):
@@ -788,36 +621,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_comments_with_space on a list containing
-        # [
-        #     '# Happy comment',
-        #     '# Sad comment',
-        #     '',
-        #     'Another test',
-        # ]
-        input_data = [
-            '# Happy comment',
-            '# Sad comment',
-            '',
-            'Another test',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/comment_space_comments_space_noise_input
+        input_data = common.get_parser_input(
+            'multiline/comment_space_comments_space_noise_input',
+        )
+
         result = parser.multiline.get_comments_with_space(input_data)
 
-        # Then I see the following leading lines: ['# Happy comment',
-        # '# Sad comment', ''] and remaining: ['Another test']
+        # Then I see the results from
+        # multiline/comment_space_comments_space_noise_expected
         self.assertEqual(
             result,
-            {
-                'comments_and_space': [
-                    '# Happy comment',
-                    '# Sad comment',
-                    '',
-                ],
-                'remaining': [
-                    'Another test',
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/comment_space_comments_space_noise_expected',
+                input_data,
+            ),
         )
 
     def test_get_leading_comments_with_multiple_trailing_lines(self):
@@ -827,33 +646,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_comments_with_space on a list containing
-        # [
-        #     '# Happy comment',
-        #     'Another test',
-        #     'Second line',
-        # ]
-        input_data = [
-            '# Happy comment',
-            'Another test',
-            'Second line',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/comment_space_comments_more_noise_input
+        input_data = common.get_parser_input(
+            'multiline/comment_space_comments_more_noise_input',
+        )
+
         result = parser.multiline.get_comments_with_space(input_data)
 
-        # Then I see the following leading lines: ['# Happy comment']
-        # and remaining: ['Another test', 'Second line']
+        # Then I see the results from
+        # multiline/comment_space_comments_more_noise_expected
         self.assertEqual(
             result,
-            {
-                'comments_and_space': [
-                    '# Happy comment',
-                ],
-                'remaining': [
-                    'Another test',
-                    'Second line',
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/comment_space_comments_more_noise_expected',
+                input_data,
+            ),
         )
 
     def test_get_leading_comments_space_separated_with_trailing_data(self):
@@ -863,39 +671,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_comments_with_space on a list containing
-        # [
-        #     '# Happy comment',
-        #     '',
-        #     '# Sad comment',
-        #     '',
-        #     'Another test',
-        # ]
-        input_data = [
-            '# Happy comment',
-            '',
-            '# Sad comment',
-            '',
-            'Another test',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/comment_space_intervening_space_input
+        input_data = common.get_parser_input(
+            'multiline/comment_space_intervening_space_input',
+        )
+
         result = parser.multiline.get_comments_with_space(input_data)
 
-        # Then I see the following leading lines: ['# Happy comment', '',
-        # '# Sad comment', ''] and remaining: ['Another test']
+        # Then I see the results from
+        # multiline/comment_space_intervening_space_expected
         self.assertEqual(
             result,
-            {
-                'comments_and_space': [
-                    '# Happy comment',
-                    '',
-                    '# Sad comment',
-                    '',
-                ],
-                'remaining': [
-                    'Another test',
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/comment_space_intervening_space_expected',
+                input_data,
+            ),
         )
 
     def test_get_no_leading_comments_with_leading_space(self):
@@ -905,29 +696,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_comments_with_space on a list containing
-        # [
-        #     '',
-        #     '# Happy comment',
-        # ]
-        input_data = [
-            '',
-            '# Happy comment',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/comment_space_leading_space_input
+        input_data = common.get_parser_input(
+            'multiline/comment_space_leading_space_input',
+        )
+
         result = parser.multiline.get_comments_with_space(input_data)
 
-        # Then I see the following no leading lines, and remaining:  ['',
-        # '# Happy comment']
+        # Then I see the results from
+        # multiline/comment_space_leading_space_expected
         self.assertEqual(
             result,
-            {
-                'comments_and_space': [],
-                'remaining': [
-                    '',
-                    '# Happy comment',
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/comment_space_leading_space_expected',
+                input_data,
+            ),
         )
 
     def test_get_no_leading_comments_with_leading_noise(self):
@@ -937,29 +721,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_comments_with_space on a list containing
-        # [
-        #     'This is not a comment',
-        #     '# Happy comment',
-        # ]
-        input_data = [
-            'This is not a comment',
-            '# Happy comment',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/comment_space_leading_noise_input
+        input_data = common.get_parser_input(
+            'multiline/comment_space_leading_noise_input',
+        )
+
         result = parser.multiline.get_comments_with_space(input_data)
 
-        # Then I see the following no leading lines, and remaining:
-        # ['This is not a comment', '# Happy comment']
+        # Then I see the results from
+        # multiline/comment_space_leading_noise_expected
         self.assertEqual(
             result,
-            {
-                'comments_and_space': [],
-                'remaining': [
-                    'This is not a comment',
-                    '# Happy comment',
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/comment_space_leading_noise_expected',
+                input_data,
+            ),
         )
 
     def test_get_no_leading_comments_from_no_lines(self):
@@ -969,17 +746,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_comments_with_space on an empty list
-        result = parser.multiline.get_comments_with_space([])
+        # When I call get_comments_with_space with input from
+        # multiline/comment_space_empty_input
+        input_data = common.get_parser_input(
+            'multiline/comment_space_empty_input',
+        )
 
-        # Then I see the following no leading lines, and no remaining lines
+        result = parser.multiline.get_comments_with_space(input_data)
+
+        # Then I see the results from
+        # multiline/comment_space_empty_expected
         self.assertEqual(
             result,
-            {
-                'comments_and_space': [],
-                'remaining': [],
-                'raw_input': [],
-            },
+            common.get_parser_output(
+                'multiline/comment_space_empty_expected',
+                input_data,
+            ),
         )
 
     def test_getting_space_no_input_modification(self):
@@ -989,27 +771,20 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_space on a list containing
-        # """[
-        #    ' \t  ',
-        #    '',
-        #    'left behind',
-        # ] """
-        input_var = [
-            ' \t  ',
-            '',
-            'left behind',
-        ]
-        parser.multiline.get_space(input_var)
+        # When I call get_pythonish_string with input from
+        # multiline/pythonish_string_input
+        input_data = common.get_parser_input(
+            'multiline/space_no_space_input',
+        )
+
+        expected_data = deepcopy(input_data)
+
+        parser.multiline.get_space(input_data)
 
         # Then my input variable is not modified
         self.assertEqual(
-            input_var,
-            [
-                ' \t  ',
-                '',
-                'left behind',
-            ],
+            input_data,
+            expected_data,
         )
 
     def test_get_space_non_whitespace(self):
@@ -1019,22 +794,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_space on a list containing ['bar']
-        input_data = [
-            'bar',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/space_no_space_input
+        input_data = common.get_parser_input(
+            'multiline/space_no_space_input',
+        )
+
         result = parser.multiline.get_space(input_data)
 
-        # Then I see no space and ['bar'] remaining
+        # Then I see the results from
+        # multiline/space_no_space_expected
         self.assertEqual(
             result,
-            {
-                'space': [],
-                'remaining': [
-                    'bar',
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/space_no_space_expected',
+                input_data,
+            ),
         )
 
     def test_get_space_non_whitespace_then_space(self):
@@ -1044,24 +819,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_space on a list containing ['bar', '']
-        input_data = [
-            'bar',
-            '',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/space_leading_noise_input
+        input_data = common.get_parser_input(
+            'multiline/space_leading_noise_input',
+        )
+
         result = parser.multiline.get_space(input_data)
 
-        # Then I see no space and ['bar', ''] remaining
+        # Then I see the results from
+        # multiline/space_leading_noise_expected
         self.assertEqual(
             result,
-            {
-                'space': [],
-                'remaining': [
-                    'bar',
-                    '',
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/space_leading_noise_expected',
+                input_data,
+            ),
         )
 
     def test_get_space_blank_line(self):
@@ -1071,22 +844,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_space on a list containing ['']
-        input_data = [
-            '',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/space_basic_input
+        input_data = common.get_parser_input(
+            'multiline/space_basic_input',
+        )
+
         result = parser.multiline.get_space(input_data)
 
-        # Then I see [''] space and no remaining
+        # Then I see the results from
+        # multiline/space_basic_expected
         self.assertEqual(
             result,
-            {
-                'space': [
-                    '',
-                ],
-                'remaining': [],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/space_basic_expected',
+                input_data,
+            ),
         )
 
     def test_get_space_whitespace_line(self):
@@ -1096,22 +869,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_space on a list containing [' \t  ']
-        input_data = [
-            ' \t  ',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/space_whitespace_input
+        input_data = common.get_parser_input(
+            'multiline/space_whitespace_input',
+        )
+
         result = parser.multiline.get_space(input_data)
 
-        # Then I see [' \t  '] space and no remaining
+        # Then I see the results from
+        # multiline/space_whitespace_expected
         self.assertEqual(
             result,
-            {
-                'space': [
-                    ' \t  ',
-                ],
-                'remaining': [],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/space_whitespace_expected',
+                input_data,
+            ),
         )
 
     def test_get_space_whitespace_and_blank_line(self):
@@ -1121,24 +894,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_space on a list containing [' \t  ', '']
-        input_data = [
-            ' \t  ',
-            '',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/space_whitespace_and_blank_input
+        input_data = common.get_parser_input(
+            'multiline/space_whitespace_and_blank_input',
+        )
+
         result = parser.multiline.get_space(input_data)
 
-        # Then I see [' \t  ', ''] space and no remaining
+        # Then I see the results from
+        # multiline/space_whitespace_and_blank_expected
         self.assertEqual(
             result,
-            {
-                'space': [
-                    ' \t  ',
-                    '',
-                ],
-                'remaining': [],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/space_whitespace_and_blank_expected',
+                input_data,
+            ),
         )
 
     def test_get_space_followed_by_non_space(self):
@@ -1148,28 +919,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_space on a list containing [' \t  ', '',
-        # 'left behind']
-        input_data = [
-            ' \t  ',
-            '',
-            'left behind',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/space_whitespace_trailing_noise_input
+        input_data = common.get_parser_input(
+            'multiline/space_whitespace_trailing_noise_input',
+        )
+
         result = parser.multiline.get_space(input_data)
 
-        # Then I see [' \t  ', ''] space and ['left behind'] remaining
+        # Then I see the results from
+        # multiline/space_whitespace_trailing_noise_expected
         self.assertEqual(
             result,
-            {
-                'space': [
-                    ' \t  ',
-                    '',
-                ],
-                'remaining': [
-                    'left behind',
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/space_whitespace_trailing_noise_expected',
+                input_data,
+            ),
         )
 
     def test_get_space_nothing(self):
@@ -1179,17 +944,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_space on an empty list
-        result = parser.multiline.get_space([])
+        # When I call get_comments_with_space with input from
+        # multiline/space_empty_input
+        input_data = common.get_parser_input(
+            'multiline/space_empty_input',
+        )
 
-        # Then I see no space and no remaining
+        result = parser.multiline.get_space(input_data)
+
+        # Then I see the results from
+        # multiline/space_empty_expected
         self.assertEqual(
             result,
-            {
-                'space': [],
-                'remaining': [],
-                'raw_input': [],
-            },
+            common.get_parser_output(
+                'multiline/space_empty_expected',
+                input_data,
+            ),
         )
 
     def test_getting_leading_tag_no_input_modification(self):
@@ -1199,24 +969,20 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_tags on a list containing
-        # """[
-        #    '@my_tag',
-        #    '',
-        # ] """
-        input_var = [
-            '@my_tag',
-            '',
-        ]
-        parser.multiline.get_tags(input_var)
+        # When I call get_tag with input from
+        # multiline/tag_trailing_blank_line_input
+        input_data = common.get_parser_input(
+            'multiline/tag_trailing_blank_line_input',
+        )
+
+        expected_data = deepcopy(input_data)
+
+        parser.multiline.get_tags(input_data)
 
         # Then my input variable is not modified
         self.assertEqual(
-            input_var,
-            [
-                '@my_tag',
-                '',
-            ],
+            input_data,
+            expected_data,
         )
 
     def test_get_leading_tag_with_blank_line(self):
@@ -1226,27 +992,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_tags on a list containing
-        # [
-        #     '@my_tag',
-        #     '',
-        # ]
-        input_data = [
-            '@my_tag',
-            '',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/tag_trailing_blank_line_input
+        input_data = common.get_parser_input(
+            'multiline/tag_trailing_blank_line_input',
+        )
+
         result = parser.multiline.get_tags(input_data)
 
-        # Then I see the tags: ['my_tag']
+        # Then I see the results from
+        # multiline/tag_trailing_blank_line_expected
         self.assertEqual(
             result,
-            {
-                'tags': [
-                    'my_tag',
-                ],
-                'remaining': [],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/tag_trailing_blank_line_expected',
+                input_data,
+            ),
         )
 
     def test_get_leading_tag_without_space(self):
@@ -1256,25 +1017,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_tags on a list containing
-        # [
-        #     '@my_tag',
-        # ]
-        input_data = [
-            '@my_tag',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/tag_basic_input
+        input_data = common.get_parser_input(
+            'multiline/tag_basic_input',
+        )
+
         result = parser.multiline.get_tags(input_data)
 
-        # Then I see the tags: ['my_tag']
+        # Then I see the results from
+        # multiline/tag_basic_expected
         self.assertEqual(
             result,
-            {
-                'tags': [
-                    'my_tag',
-                ],
-                'remaining': [],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/tag_basic_expected',
+                input_data,
+            ),
         )
 
     def test_get_leading_tag_with_trailing_data(self):
@@ -1284,29 +1042,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_tags on a list containing
-        # [
-        #     '@my_tag',
-        #     'I like tests',
-        # ]
-        input_data = [
-            '@my_tag',
-            'I like tests',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/tag_trailing_data_input
+        input_data = common.get_parser_input(
+            'multiline/tag_trailing_data_input',
+        )
+
         result = parser.multiline.get_tags(input_data)
 
-        # Then I see the tags: ['my_tag'], with ['I like tests'] remaining
+        # Then I see the results from
+        # multiline/tag_trailing_data_expected
         self.assertEqual(
             result,
-            {
-                'tags': [
-                    'my_tag',
-                ],
-                'remaining': [
-                    'I like tests'
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/tag_trailing_data_expected',
+                input_data,
+            ),
         )
 
     def test_get_leading_tag_with_whitespace(self):
@@ -1316,27 +1067,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_tags on a list containing
-        # [
-        #     '@my_tag',
-        #     '   \t  ',
-        # ]
-        input_data = [
-            '@my_tag',
-            '   \t  ',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/tag_trailing_space_input
+        input_data = common.get_parser_input(
+            'multiline/tag_trailing_space_input',
+        )
+
         result = parser.multiline.get_tags(input_data)
 
-        # Then I see the tags: ['my_tag']
+        # Then I see the results from
+        # multiline/tag_trailing_space_expected
         self.assertEqual(
             result,
-            {
-                'tags': [
-                    'my_tag',
-                ],
-                'remaining': [],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/tag_trailing_space_expected',
+                input_data,
+            ),
         )
 
     def test_get_leading_tag_with_whitespace_and_trailing_data(self):
@@ -1346,31 +1092,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_tags on a list containing
-        # [
-        #     '@my_tag',
-        #     '   \t  ',
-        #     'More tests',
-        # ]
-        input_data = [
-            '@my_tag',
-            '   \t  ',
-            'More tests',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/tag_trailing_space_and_noise_input
+        input_data = common.get_parser_input(
+            'multiline/tag_trailing_space_and_noise_input',
+        )
+
         result = parser.multiline.get_tags(input_data)
 
-        # Then I see the tags: ['my_tag'], with ['More tests'] remaining
+        # Then I see the results from
+        # multiline/tag_trailing_space_and_noise_expected
         self.assertEqual(
             result,
-            {
-                'tags': [
-                    'my_tag',
-                ],
-                'remaining': [
-                    'More tests',
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/tag_trailing_space_and_noise_expected',
+                input_data,
+            ),
         )
 
     def test_get_leading_tags(self):
@@ -1380,28 +1117,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_tags on a list containing
-        # [
-        #     '@my_tag',
-        #     '@moretag',
-        # ]
-        input_data = [
-            '@my_tag',
-            '@moretag',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/tag_multiple_tags_input
+        input_data = common.get_parser_input(
+            'multiline/tag_multiple_tags_input',
+        )
+
         result = parser.multiline.get_tags(input_data)
 
-        # Then I see the tags: ['my_tag', 'moretag']
+        # Then I see the results from
+        # multiline/tag_multiple_tags_expected
         self.assertEqual(
             result,
-            {
-                'tags': [
-                    'my_tag',
-                    'moretag',
-                ],
-                'remaining': [],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/tag_multiple_tags_expected',
+                input_data,
+            ),
         )
 
     def test_get_tags_and_trailing_data(self):
@@ -1411,35 +1142,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_tags on a list containing
-        # [
-        #     '@my_tag',
-        #     '@moretag',
-        #     '',
-        #     'Another test',
-        # ]
-        input_data = [
-            '@my_tag',
-            '@moretag',
-            '',
-            'Another test',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/tag_multiple_tags_trailing_noise_input
+        input_data = common.get_parser_input(
+            'multiline/tag_multiple_tags_trailing_noise_input',
+        )
+
         result = parser.multiline.get_tags(input_data)
 
-        # Then I see the tags: ['my_tag', 'moretag'], with ['Another test']
-        # remaining
+        # Then I see the results from
+        # multiline/tag_multiple_tags_trailing_noise_expected
         self.assertEqual(
             result,
-            {
-                'tags': [
-                    'my_tag',
-                    'moretag',
-                ],
-                'remaining': [
-                    'Another test',
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/tag_multiple_tags_trailing_noise_expected',
+                input_data,
+            ),
         )
 
     def test_get_leading_tags_with_multiple_trailing_lines(self):
@@ -1449,33 +1167,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_tags on a list containing
-        # [
-        #     '@manytagsmakelightshine',
-        #     'Another test',
-        #     'Second line',
-        # ]
-        input_data = [
-            '@manytagsmakelightshine',
-            'Another test',
-            'Second line',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/tag_longer_trailing_noise_input
+        input_data = common.get_parser_input(
+            'multiline/tag_longer_trailing_noise_input',
+        )
+
         result = parser.multiline.get_tags(input_data)
 
-        # Then I see the tags: ['manytagsmakelightshine'], with
-        # ['Another test', 'Second line'] remaining
+        # Then I see the results from
+        # multiline/tag_longer_trailing_noise_expected
         self.assertEqual(
             result,
-            {
-                'tags': [
-                    'manytagsmakelightshine',
-                ],
-                'remaining': [
-                    'Another test',
-                    'Second line',
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/tag_longer_trailing_noise_expected',
+                input_data,
+            ),
         )
 
     def test_get_leading_tags_space_separated_with_trailing_data(self):
@@ -1485,37 +1192,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_tags on a list containing
-        # [
-        #     '@tagyouareit',
-        #     '',
-        #     '@tageslicht',
-        #     '',
-        #     'Another test',
-        # ]
-        input_data = [
-            '@tagyouareit',
-            '',
-            '@tageslicht',
-            '',
-            'Another test',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/tag_tags_with_space_trailing_noise_input
+        input_data = common.get_parser_input(
+            'multiline/tag_tags_with_space_trailing_noise_input',
+        )
+
         result = parser.multiline.get_tags(input_data)
 
-        # Then I see the tags: ['tagyouareit', 'tageslicht'], with
-        # ['Another test'] remaining
+        # Then I see the results from
+        # multiline/tag_tags_with_space_trailing_noise_expected
         self.assertEqual(
             result,
-            {
-                'tags': [
-                    'tagyouareit',
-                    'tageslicht',
-                ],
-                'remaining': [
-                    'Another test',
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/tag_tags_with_space_trailing_noise_expected',
+                input_data,
+            ),
         )
 
     def test_get_no_leading_tags_with_leading_space(self):
@@ -1525,28 +1217,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_tags on a list containing
-        # [
-        #     '',
-        #     '# Happy tag',
-        # ]
-        input_data = [
-            '',
-            '@my_tag',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/tag_leading_space_input
+        input_data = common.get_parser_input(
+            'multiline/tag_leading_space_input',
+        )
+
         result = parser.multiline.get_tags(input_data)
 
-        # Then I see no tags, with ['', '@my_tag'] remaining
+        # Then I see the results from
+        # multiline/tag_leading_space_expected
         self.assertEqual(
             result,
-            {
-                'tags': [],
-                'remaining': [
-                    '',
-                    '@my_tag',
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/tag_leading_space_expected',
+                input_data,
+            ),
         )
 
     def test_get_no_leading_tags_with_leading_noise(self):
@@ -1556,28 +1242,22 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_tags on a list containing
-        # [
-        #     'This is not a tag',
-        #     '@new_tag',
-        # ]
-        input_data = [
-            'This is not a tag',
-            '@new_tag',
-        ]
+        # When I call get_comments_with_space with input from
+        # multiline/tag_leading_noise_input
+        input_data = common.get_parser_input(
+            'multiline/tag_leading_noise_input',
+        )
+
         result = parser.multiline.get_tags(input_data)
 
-        # Then I see no tags, with ['This is not a tag', '@new_tag'] remaining
+        # Then I see the results from
+        # multiline/tag_leading_noise_expected
         self.assertEqual(
             result,
-            {
-                'tags': [],
-                'remaining': [
-                    'This is not a tag',
-                    '@new_tag',
-                ],
-                'raw_input': input_data,
-            },
+            common.get_parser_output(
+                'multiline/tag_leading_noise_expected',
+                input_data,
+            ),
         )
 
     def test_get_no_leading_tags_from_no_lines(self):
@@ -1587,15 +1267,20 @@ class TestMultilineParser(unittest.TestCase):
         # Given I have Romaine core's parser
         parser = common.get_romaine_parser()
 
-        # When I call get_tags on an empty list
-        result = parser.multiline.get_tags([])
+        # When I call get_comments_with_space with input from
+        # multiline/tag_empty_input
+        input_data = common.get_parser_input(
+            'multiline/tag_empty_input',
+        )
 
-        # Then I see no tags
+        result = parser.multiline.get_tags(input_data)
+
+        # Then I see the results from
+        # multiline/tag_empty_expected
         self.assertEqual(
             result,
-            {
-                'tags': [],
-                'remaining': [],
-                'raw_input': [],
-            },
+            common.get_parser_output(
+                'multiline/tag_empty_expected',
+                input_data,
+            ),
         )
